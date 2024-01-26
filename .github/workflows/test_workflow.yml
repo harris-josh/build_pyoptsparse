@@ -262,7 +262,7 @@ jobs:
           fi
 
           if [[ "${{ matrix.FORCE_BUILD}}" ]]; then
-            FORCE_BUILD="-f"
+            FORCE_BUILD="--force-build"
           fi
 
           echo "build_pyoptsparse -v $BRANCH $FORCE_BUILD $PAROPT $SNOPT $NO_IPOPT $LINEAR_SOLVER"
