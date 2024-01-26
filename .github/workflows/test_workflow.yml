@@ -34,6 +34,7 @@ jobs:
             PYOPTSPARSE: 'default'
             PAROPT: true
             SNOPT: 7.7
+            FORCE_BUILD: false
 
           # test baseline versions on Ubuntu without MPI
           - NAME: Ubuntu Baseline, no MPI
@@ -43,6 +44,7 @@ jobs:
             SCIPY: 1.11
             PYOPTSPARSE: 'default'
             SNOPT: 7.7
+            FORCE_BUILD: false
 
           # test baseline versions on MacOS
           - NAME: MacOS Baseline
@@ -54,6 +56,7 @@ jobs:
             PYOPTSPARSE: 'default'
             PAROPT: true
             SNOPT: 7.7
+            FORCE_BUILD: false
 
           # test latest versions
           - NAME: Ubuntu Latest
@@ -65,6 +68,53 @@ jobs:
             PYOPTSPARSE: 'latest'
             PAROPT: true
             SNOPT: 7.7
+            FORCE_BUILD: false
+
+          # test baseline versions on Ubuntu (forced build)
+          - NAME: Ubuntu Baseline (Force Build)
+            OS: ubuntu-latest
+            PY: '3.11'
+            NUMPY: 1.25
+            SCIPY: 1.11
+            MPI4PY: true
+            PYOPTSPARSE: 'default'
+            PAROPT: true
+            SNOPT: 7.7
+            FORCE_BUILD: true
+
+          # test baseline versions on Ubuntu without MPI (forced build)
+          - NAME: Ubuntu Baseline, no MPI (Force Build)
+            OS: ubuntu-latest
+            PY: '3.11'
+            NUMPY: 1.25
+            SCIPY: 1.11
+            PYOPTSPARSE: 'default'
+            SNOPT: 7.7
+            FORCE_BUILD: true
+
+          # test baseline versions on MacOS (forced build)
+          - NAME: MacOS Baseline (Force Build)
+            OS: macos-latest
+            PY: '3.11'
+            NUMPY: 1
+            SCIPY: 1
+            MPI4PY: true
+            PYOPTSPARSE: 'default'
+            PAROPT: true
+            SNOPT: 7.7
+            FORCE_BUILD: true
+
+          # test latest versions (forced build)
+          - NAME: Ubuntu Latest (Force Build)
+            OS: ubuntu-latest
+            PY: 3
+            NUMPY: 1
+            SCIPY: 1
+            MPI4PY: true
+            PYOPTSPARSE: 'latest'
+            PAROPT: true
+            SNOPT: 7.7
+            FORCE_BUILD: true
 
           # test oldest supported versions
           - NAME: Ubuntu Oldest
@@ -75,6 +125,7 @@ jobs:
             PYOPTSPARSE: 'v1.2'
             NO_IPOPT: true
             SNOPT: 7.2
+            FORCE_BUILD: false
 
     runs-on: ${{ matrix.OS }}
 
@@ -210,8 +261,12 @@ jobs:
             NO_IPOPT="--no-ipopt"
           fi
 
-          echo "build_pyoptsparse -v $BRANCH $PAROPT $SNOPT $NO_IPOPT $LINEAR_SOLVER"
-          build_pyoptsparse -v $BRANCH $PAROPT $SNOPT $NO_IPOPT $LINEAR_SOLVER
+          if [[ "${{ matrix.FORCE_BUILD}}" ]]; then
+            FORCE_BUILD="-f"
+          fi
+
+          echo "build_pyoptsparse -v $BRANCH $FORCE_BUILD $PAROPT $SNOPT $NO_IPOPT $LINEAR_SOLVER"
+          build_pyoptsparse -v $BRANCH $FORCE_BUILD $PAROPT $SNOPT $NO_IPOPT $LINEAR_SOLVER
 
           echo "BRANCH=${BRANCH}" >> $GITHUB_ENV
 
